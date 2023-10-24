@@ -16,10 +16,11 @@ Node.js v18+
 ## Configuration File
 
 ### Trakt 
- * ``client_id``: Uniq ID to identify your application, https://trakt.tv/oauth/applications 
- * ``client_secret``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
+ * ``client_id``: To interact with Trakt API, retrieve it from https://trakt.tv/oauth/applications 
+ * ``client_secret``: To interact with Trakt API, retrieve it from  https://trakt.tv/oauth/applications
  * ``access_token``: Created by app at runtime
  * ``refresh_token``: Created by app at runtime
+ * ``device_code``: Created by app at runtime
 
 ### TMDB
  * ``api_read_access_token``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
