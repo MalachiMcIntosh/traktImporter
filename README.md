@@ -1,23 +1,45 @@
-# Trakt Importer
+# Trakt Watchlist Importer
+
 ## Purpose
 Import Movies or TV Shows from CSV file into your Trakt.tv Watchlist.
 If you don't know the TMDB or IMDB id the application will search for you and provide options.
 
 ## Requirements
 Node.js v18+
-### Trakt oauth
-* Create a [Trakt.tv application](https://trakt.tv/oauth/applications) and copy your ``client_id`` and ``client_secret`` into the [config file](#Trakt).
-### TMDB api key
-* Create a [Trakt.tv application](https://trakt.tv/oauth/applications) and copy your ``client_id`` and ``client_secret`` into the [config file](#Trakt).
+
+### Trakt OAuth
+* Create a [Trakt.tv application](https://trakt.tv/oauth/applications) and copy your ``client_id`` and ``client_secret`` into the [config file](#trakt).
+
+### TMDB API Key
+* Create a [TMDB app](https://www.themoviedb.org/settings/api) for your TMDB account, and add the ``API Read Access Token`` into the [config file](#tmdb).
 
 ## Configuration File
+
 ### Trakt 
- * ``client_id``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
+ * ``client_id``: Uniq ID to identify your application, https://trakt.tv/oauth/applications 
  * ``client_secret``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
- * ``access_token``: Created by app at run time
- * ``refresh_token``: Created by app at run time
+ * ``access_token``: Created by app at runtime
+ * ``refresh_token``: Created by app at runtime
+
 ### TMDB
- * ``client_id``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
+ * ``api_read_access_token``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
+
+### Example
+```
+{
+    "trakt": {
+        "client_id": "Add your client_id here",
+        "client_secret": "Add your client_secret here",
+        "access_token": "This is generated at runtime",
+        "refresh_token": "This is generated at runtime",
+        "device_code": "This is generated at runtime"
+    },
+    "tmdb": {
+        "api_read_access_token": "Add your api_read_access_token here"
+    }
+}
+```
+
 ## Import File
 Header line format must be 'title,year,imdb,tmdb,type'
 title: Movie or TV Title (optional)
@@ -33,7 +55,6 @@ Creed,2015,,,movie
 ```
 
 ## Usage
-
 ```text
 Usage: trakt_import.js [options]
 
@@ -47,9 +68,6 @@ Examples:
   trakt_import.js -c config.json -i         imports from import.csv using
   import.csv                                credentials in config.json
 ```
-
-
-
 
 ## Support
 To get support, please create new [issue](https://github.com/MalachiMcintosh/traktImporter/issues)
