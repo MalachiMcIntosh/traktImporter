@@ -43,11 +43,12 @@ Create a [TMDB app](https://www.themoviedb.org/settings/api) for your TMDB accou
 
 ## Import File
 Header line format must be ```title,year,imdb,tmdb,type```:
-``title``: Movie or TV Title (optional)
-``year``: Movie or TV release year (optional)
-``imdb``: imdb ID (optional - recommended)
-``tmdb``: tmdb ID (optional - recommended)
-``type``: [movie|tv] (mandatory)
+* ``title``: Movie or TV Title (optional)
+* ``year``: Movie or TV release year (optional)
+* ``imdb``: imdb ID (optional - recommended)
+* ``tmdb``: tmdb ID (optional - recommended)
+* ``type``: [movie|tv] (mandatory)
+
 
 ### Example
 ```
