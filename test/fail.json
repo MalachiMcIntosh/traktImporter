@@ -1,0 +1,12 @@
+{
+    "trakt": {
+        "client_id": "",
+        "client_secret": "",
+        "access_token": "",
+        "refresh_token": ""
+    },
+    "tmdb": {
+        "api_key": "",
+        "api_read_access_token": ""
+    }
+}
