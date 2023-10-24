@@ -23,7 +23,7 @@ Node.js v18+
  * ``device_code``: Created by app at runtime
 
 ### TMDB
- * ``api_read_access_token``: Uniq ID to identify your application, https://trakt.tv/oauth/applications
+ * ``api_read_access_token``: To interact with TMDB API, retrieve it from https://www.themoviedb.org/settings/api
 
 ### Example
 ```
@@ -74,7 +74,7 @@ Examples:
 To get support, please create new [issue](https://github.com/MalachiMcintosh/traktImporter/issues)
 
 ## Contribution
-I'm happy to accept Pull Requests! 
+Happy to accept pull requests.
 
 ## Licence
 This script is free software:  you can redistribute it and/or  modify  it under  the  terms  of the  GNU  General  Public License  as published by the Free Software Foundation.
