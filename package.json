@@ -1,7 +1,7 @@
 {
   "name": "traktimporter",
   "version": "1.0.0",
-  "description": "takes a list of movies and shows and imports to Trakt",
+  "description": "takes a list of movies and shows and imports to Trakt Watchlist",
   "main": "src/trakt_import.js",
   "scripts": {
     "test": "jest"

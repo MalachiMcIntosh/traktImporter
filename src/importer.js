@@ -3,43 +3,52 @@ var request = require('axios')
 var papa = require('papaparse')
 const { log, error } = require('console')
 
-// main function
-function main(){
-// parse args
-  
-  // read csv file, validate 
-  // var filePathCSV = prompt('Input CSV import file path (or filename if in current directory) here: ')
-  var filePathCSV = 'test.csv' // FOR TESTING
-  var items = extractItemsFromCSVFile(filePathCSV) // DONE
 
+function main() {
+  var argv = require('yargs/yargs')(process.argv.slice(2))
+    .usage('Usage: $0 [options]')
+    .example('$0 -c config.json -i import.csv', 'imports from import.csv using credentials in config.json')
+    .alias('c', 'config')
+    .nargs('c', 1)
+    .alias('i', 'import')
+    .nargs('i', 1)
+    .describe('c', 'path to config (JSON) file.')
+    .describe('i', 'path to import (CSV) file')
+    .demandOption(['c', 'i'])
+    .help('h')
+    .alias('h', 'help')
+    .argv
   // read config file, validate
-  // var filePathConfig = prompt('Input config file path (or filename if in current directory) here: ')
-  var filePathConfig = 'config.json' // FOR TESTING
-  importConfig(filePathConfig)  
+  // var filePathConfig = 'config.json' // FOR DEV
+  var filePathConfig = argv.config
+  // importConfig(filePathConfig)
 
+  // read csv file, validate
+  // var filePathCSV = 'test/test.csv' // FOR DEV
+  var filePathCSV = argv.import
+  // var items = extractItemsFromCSVFile(filePathCSV)
   // auth to trakt
-  // authenticateTrakt() // DONE
+  // authenticateTrakt()
 
   // construct the payload
-  buildImportJSON(items)
+  // buildImportJSON(items)
 
   // import to watchlist
   // addToTraktWatchlist()
   // exit
 }
-// main()
 
- // Build JSON object from CSV
+// Build JSON object from CSV
 
-  // 2. iterate over JSON:
-  //        for each item 
-  //          check that it has IMDB or TMDB
-  //          if it does: add it to json object 
-  //          if it doesn't: searchTmdb(title, year)
-function buildImportJSON(items){
-  for(let item of items){
+// 2. iterate over JSON:
+//        for each item 
+//          check that it has IMDB or TMDB
+//          if it does: add it to json object 
+//          if it doesn't: searchTmdb(title, year)
+function buildImportJSON(items) {
+  for (let item of items) {
     // check has ID (imdb or tmdb)
-    if(item.imdb!="" || item.tmdb!=""){
+    if (item.imdb != "" || item.tmdb != "") {
       log(item.imdb)
       log(item.tmdb)
     } else {
@@ -62,15 +71,11 @@ var trakt = {
   client_secret: "",
   access_token: "",
   refresh_token: "",
-  device_code: "",
-  user_code: "",
+  device_code: ""
 }
 
 var tmdb = {
-  api_key: "",
-  api_read_access_token: "",
-  access_token: "",
-  refresh_token: ""
+  api_read_access_token: ""
 }
 
 // CSV must have the following header. Empty lines will be stripped.
@@ -100,10 +105,10 @@ function extractItemsFromCSVFile(filePath) {
   file = file.split(/\r?\n/).filter(line => !line.match(regex)).join('\n')
 
   // strip lines with incorrect types.
-  file = file.split(/\r?\n/).filter(line => (line.endsWith(',tv') || line.endsWith(',movie')) ).join('\n')
-  
+  file = file.split(/\r?\n/).filter(line => (line.endsWith(',tv') || line.endsWith(',movie'))).join('\n')
+
   // strip lines with incorrect number of commas (4).
-  file = file.split(/\r?\n/).filter(line => ((line.split(",").length - 1)==4) ).join('\n')
+  file = file.split(/\r?\n/).filter(line => ((line.split(",").length - 1) == 4)).join('\n')
 
   // parse to JSON
   var objects = papa.parse(file, config)
@@ -137,12 +142,8 @@ function importConfig(filePath) {
     error('trakt client_secret empty')
     return 0
   }
-  if (tmdb.api_key == "") {
-    error('trakt api_key empty')
-    return 0
-  }
   if (tmdb.api_read_access_token == "") {
-    error('trakt api_read_access_token empty')
+    error('tmdb api_read_access_token empty')
     return 0
   }
   return 1
@@ -157,7 +158,7 @@ async function authenticateTrakt(refresh = false) {
     log('refreshing') // TODO: refresh token flow
   } else {
     // Send Device Code
-    device_code = await sendTraktDeviceCode()
+    trakt.device_code = await sendTraktDeviceCode()
     trakt.access_token = await getTraktAccessToken(device_code)
     log(`access_token ${access_token}`)
   }
@@ -177,15 +178,22 @@ async function sendTraktDeviceCode() {
     // log('Status:', response.status)
     // log('Headers:', response.headers)
     // log('Response:', response.data)
-    code = response.data.device_code
-    user_code = response.data.user_code
-    // log(`user_code ${user_code}`)
+    const code = response.data.device_code
+    const user_code = response.data.user_code
+    if (user_code == null || user_code == "") {
+      error('https://api.trakt.tv/oauth/device/code failed to return user code.')
+      return 0
+    }
+    if (code == null || code == "") {
+      error('https://api.trakt.tv/oauth/device/code failed to return device code.')
+      return 0
+    }
     log(`Navigate to https://trakt.tv/activate and input ${user_code}`)
     prompt("Click Enter when done.")
 
     return code
   })
-  // log('user_code:', user_code)
+
   return device_code
 }
 
@@ -253,8 +261,11 @@ async function searchTMDB(title, year, type) {
       error(error)
     })
 
-    return results
+  return results
 }
 
-
-module.exports = { extractItemsFromCSVFile, importConfig, searchTMDB, addToTraktWatchlist, getTraktAccessToken}
+module.exports = {
+  extractItemsFromCSVFile,
+  importConfig,
+  main
+}

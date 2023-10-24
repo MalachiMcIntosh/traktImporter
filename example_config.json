@@ -3,10 +3,10 @@
         "client_id": "",
         "client_secret": "",
         "access_token": "",
-        "refresh_token": ""
+        "refresh_token": "",
+        "device_code": ""
     },
     "tmdb": {
-        "api_key": "",
         "api_read_access_token": ""
     }
 }
