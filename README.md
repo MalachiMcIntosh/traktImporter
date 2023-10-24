@@ -8,10 +8,10 @@ If you don't know the TMDB or IMDB id the application will search for you and pr
 Node.js v18+
 
 ### Trakt OAuth
-* Create a [Trakt.tv app](https://trakt.tv/oauth/applications) and copy your ``client_id`` and ``client_secret`` into the [config file](#trakt).
+Create a [Trakt.tv app](https://trakt.tv/oauth/applications) and copy your ``client_id`` and ``client_secret`` into the [config file](#trakt).
 
 ### TMDB API Key
-* Create a [TMDB app](https://www.themoviedb.org/settings/api) for your TMDB account, and add the ``API Read Access Token`` into the [config file](#tmdb).
+Create a [TMDB app](https://www.themoviedb.org/settings/api) for your TMDB account, and add the ``API Read Access Token`` into the [config file](#tmdb).
 
 ## Configuration File
 
