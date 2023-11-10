@@ -2,9 +2,6 @@ import fs from 'fs';
 import request from 'axios';
 import papa from 'papaparse';
 import { log, error } from 'console';
-// var request = require('axios');
-// var papa = require('papaparse');
-// const { log, error } = require('console');
 import inquirer from 'inquirer';
 import yargs from 'yargs/yargs';
 
@@ -29,7 +26,7 @@ function main() {
   importConfig(filePathConfig);
 
   // read csv file, validate
-  // var filePathCSV = 'test/test.csv'; // FOR DEV
+  // var filePathCSV = 'test/pass.csv'; // FOR DEV
   var filePathCSV = argv.import;
   var items = extractItemsFromCSVFile(filePathCSV);
   // auth to trakt
@@ -54,22 +51,65 @@ async function buildImportJSON(items) {
   for (let item of items) {
     if (item.imdb != "" || item.tmdb != "") {
       // TODO: Add to JSON
-      log(item.imdb);
-      log(item.tmdb);
+      // log(item.imdb);
+      // log(item.tmdb);
     } else {
       const searchresults = await searchTMDB(item.title, item.year, item.type);
       if(searchresults == null || searchresults == ""){
         log(`No TMDB search results for title: ${item.title}, year: ${item.year}, type: ${item.type}`);
       } else {
-        log('results here\n' + JSON.stringify(searchresults.results, null, 2));
-        // https://www.npmjs.com/package/inquirer
-        // https://www.npmjs.com/package/prompts
+        log(searchresults.results);
+        const id = await pickSearchResult(searchresults.results);        
       }
-
     }
   }
 }
 
+function formatSearchItem(item) {
+  const title = (item.title==null) ? item.name : item.title;
+  const date =  (item.release_date==null) ? item.first_air_date : item.release_date;
+  const overview = item.overview;
+  const lang = item.original_language;
+  const formattedItem = "Title: " + title + "\nRelease Date: " + date + "\nOverview: " + overview + "\nOriginal Language: " + lang;
+  return formattedItem;
+}
+
+async function pickSearchResult(searchResults) {
+  searchResults = searchResults.length <= 3 ?  searchResults : searchResults.slice(0, 3);
+  const formattedChoices = searchResults.map(formatSearchItem);
+  formattedChoices.push('None');
+  const questions = [
+    {
+      type: 'list',
+      name: 'selection',
+      message: 'Select from search results:',
+      choices: formattedChoices,
+      pageSize: 10,
+    }
+  ]
+
+  const selection = inquirer
+    .prompt(questions)
+    .then((answer) => {
+      if(answer.selection=='None'){
+        return -1;
+      }
+      const index = formattedChoices.indexOf(answer.selection);
+      const selection = searchResults[index];
+      return selection.id;
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+        console.error(error);
+      } else {
+        // Something else went wrong
+        console.error(error);
+      }
+    });
+
+  return selection;
+}
 // https://stackoverflow.com/a/74250003
 function prompt(msg) {
   fs.writeSync(1, String(msg));
@@ -105,10 +145,10 @@ function extractItemsFromCSVFile(filePath) {
 
   // validate header
   const header = "title,year,imdb,tmdb,type";
-  const headerCheck = file.split(/\r?\n/)[0];
-  const headerOK = headerCheck===header;
-  if (!headerOK) {
-    error(`Error: Incorrect header for CSV import. Given: ${headerCheck} Expected: ${header}`);
+  const headerGiven = file.split(/\r?\n/)[0];
+  const headerCorrect = headerGiven===header;
+  if (!headerCorrect) {
+    error(`Error: Incorrect header for CSV import. Given: ${headerGiven} Expected: ${header}`);
     return 0;
   }
 
@@ -260,7 +300,6 @@ async function addToTraktWatchlist(object) {
   // return access_token;
 }
 
-
 async function searchTMDB(title, year, type) {
   const options = {
     method: 'GET',
@@ -284,5 +323,6 @@ async function searchTMDB(title, year, type) {
 
   return results;
 }
+
 export default main;
 export { extractItemsFromCSVFile, importConfig };
